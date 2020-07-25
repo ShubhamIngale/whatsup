@@ -26,9 +26,10 @@ socket.on('roomUsers', ({room, users}) => {
 socket.on('message', message => {
         console.log(message);
         outputMessage(message);
-        if(!document.hasFocus()) {
-                notify(message);
-            }
+        // if(!document.hasFocus()) {
+        //         notify(message);
+        //     }
+        notify(message);
         // scroll down
         chatMessages.scrollTop = chatMessages.scrollHeight;
 });
