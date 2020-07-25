@@ -3,6 +3,7 @@ const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const usersList = document.getElementById('users');
 
+
 // get user and room from url
 const {username, room} = Qs.parse(location.search, {
         ignoreQueryPrefix: true
@@ -25,7 +26,9 @@ socket.on('roomUsers', ({room, users}) => {
 socket.on('message', message => {
         console.log(message);
         outputMessage(message);
-
+        if(!document.hasFocus()) {
+                notify(message);
+            }
         // scroll down
         chatMessages.scrollTop = chatMessages.scrollHeight;
 });
@@ -66,4 +69,33 @@ function outputUsers(users) {
         usersList.innerHTML = `
                 ${users.map(user => `<li>${user.username}</li>`).join('')}
         `;
+}
+
+// notification
+function notify(message) {
+
+        if (!window.Notification) {
+                console.log('Browser does not support notifications.');
+            } else {
+                // check if permission is already granted
+                if (Notification.permission === 'granted') {
+                    // show notification here
+                var notify = new Notification(`from ${message.username}`, {
+                        body: message.text,
+                        // icon: 'https://bit.ly/2DYqRrh',
+                    });
+                    
+                } else {
+                    // request permission from user
+                    Notification.requestPermission().then(function(p) {
+                       if(p === 'granted') {
+                               console.log('You will get Message Notification');
+                       } else {
+                           console.log('User blocked notifications.');
+                       }
+                    }).catch(function(err) {
+                        console.error(err);
+                    });
+                }
+            }
 }
